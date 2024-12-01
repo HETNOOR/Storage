@@ -32,7 +32,8 @@ class ImageCell: UICollectionViewCell {
         contentView.addSubview(progressLabel)
         contentView.addSubview(downloadButton)
         
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.isHidden = true
         
         progressLabel.textAlignment = .center
@@ -45,6 +46,7 @@ class ImageCell: UICollectionViewCell {
         
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            
         }
         
         progressView.snp.makeConstraints { make in
@@ -54,12 +56,17 @@ class ImageCell: UICollectionViewCell {
         
         progressLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalTo(progressView.snp.centerY)
+            make.bottom.equalTo(progressView).inset(20)
         }
         
         downloadButton.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+        
+        contentView.layer.cornerRadius = 10
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.lightGray.cgColor
+        contentView.clipsToBounds = true
     }
     
     func configure(with viewModel: ImageCellViewModel) {
