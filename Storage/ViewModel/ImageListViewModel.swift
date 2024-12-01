@@ -9,10 +9,9 @@ import Foundation
 import Combine
 
 final class ImageListViewModel: ObservableObject {
-
     @Published var cellViewModels: [ImageCellViewModel] = []
-    private let imageService = ImageService()
     private var cancellables = Set<AnyCancellable>()
+    private let imageService = ImageService()
     
     func fetchImages() {
         imageService.fetchImages()
@@ -22,9 +21,14 @@ final class ImageListViewModel: ObservableObject {
                     print("Ошибка загрузки изображений: \(error)")
                 }
             }, receiveValue: { [weak self] images in
-                self?.cellViewModels = images.map { ImageCellViewModel(image: $0, imageService: self!.imageService) }
-
+                guard let self = self else { return }
+                
+                self.cellViewModels = images.map { image in
+                    let existingViewModel = self.cellViewModels.first(where: { $0.image.id == image.id })
+                    return existingViewModel ?? ImageCellViewModel(image: image, imageService: self.imageService)
+                }
             })
             .store(in: &cancellables)
     }
 }
+
